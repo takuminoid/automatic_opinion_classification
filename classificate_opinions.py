@@ -1,5 +1,3 @@
-
-
 import mojimoji as mj
 
 class ClassificateOpinions():
@@ -15,10 +13,11 @@ class ClassificateOpinions():
     self.opinions = opinions
 
   def classificate(self):
-    out = self.text_splitter(self.opinions)
     pass
 
   def text_cleaning(self, opinions):
+    splitted_opinions = self.text_splitter(self.opinions) # 意見の分割
+    splitted_opinions = self.num_zen_to_han(splitted_opinions) # 数字の全角を半角へ
     pass
 
   def text_splitter(self, opinions):
@@ -42,7 +41,9 @@ class ClassificateOpinions():
             flag = True
       if not flag:
         splitted_opinions.append(opinion)
-
-    for i in range(len(splitted_opinions)):
-      splitted_opinions[i] = mj.zen_to_han(splitted_opinions[i], kana=False, ascii=False)
     return splitted_opinions
+
+  def num_zen_to_han(self, opinions):
+    for i in range(len(opinions)):
+      opinions[i] = mj.zen_to_han(opinions[i], kana=False, ascii=False)
+    return opinions
