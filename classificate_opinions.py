@@ -15,13 +15,14 @@ class ClassificateOpinions():
   def __init__(self, opinions):
     self.opinions = opinions
 
-  def classificate(self, opinions=self.opinions):
+  def classificate(self):
+    out = self.text_spliter(self.opinions)
     pass
 
-  def text_cleaning(self, opinions=self.opinions):
+  def text_cleaning(self, opinions):
     pass
 
-  def text_spliter(self, opinions=self.opinions):
+  def text_spliter(self, opinions):
     cleaned_opinions = []
     split_list = ['。・', '？・']
     split_list2 = ['②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨']
@@ -41,3 +42,4 @@ class ClassificateOpinions():
             flag = True
       if not flag:
         cleaned_opinions.append(opinion)
+    return cleaned_opinions
