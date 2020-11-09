@@ -1,8 +1,7 @@
 
 
+import mojimoji as mj
 
-
-# classificate_opinions = ClassificateOpinions()
 class ClassificateOpinions():
   '''
     概要：意見を入力すると，自動的に分類ラベルの予測，意見分類を行う
@@ -43,4 +42,7 @@ class ClassificateOpinions():
             flag = True
       if not flag:
         splitted_opinions.append(opinion)
+
+    for i in range(len(splitted_opinions)):
+      splitted_opinions[i] = mj.zen_to_han(splitted_opinions[i], kana=False, ascii=False)
     return splitted_opinions
