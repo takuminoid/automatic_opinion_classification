@@ -16,14 +16,14 @@ class ClassificateOpinions():
     self.opinions = opinions
 
   def classificate(self):
-    out = self.text_spliter(self.opinions)
+    out = self.text_splitter(self.opinions)
     pass
 
   def text_cleaning(self, opinions):
     pass
 
-  def text_spliter(self, opinions):
-    cleaned_opinions = []
+  def text_splitter(self, opinions):
+    splitted_opinions = []
     split_list = ['。・', '？・']
     split_list2 = ['②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨']
     for opinion in opinions:
@@ -32,15 +32,15 @@ class ClassificateOpinions():
         for spliter in split_list2:
           if spliter in opinion:
             opinion_buf = opinion.split(spliter)
-            cleaned_opinions.append(opinion_buf[0][1:])
+            splitted_opinions.append(opinion_buf[0][1:])
             opinion = opinion_buf[1]
             flag = True
-        cleaned_opinions.append(opinion)
+        splitted_opinions.append(opinion)
       if not flag:
         for spliter in split_list:
           if spliter in opinion:
-            cleaned_opinions.extend(opinion.split(spliter))
+            splitted_opinions.extend(opinion.split(spliter))
             flag = True
       if not flag:
-        cleaned_opinions.append(opinion)
-    return cleaned_opinions
+        splitted_opinions.append(opinion)
+    return splitted_opinions
