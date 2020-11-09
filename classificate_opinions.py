@@ -32,9 +32,10 @@ class ClassificateOpinions():
         for spliter in split_list2:
           if spliter in opinion:
             opinion_buf = opinion.split(spliter)
-            cleaned_opinions.append(opinion_buf[0])
+            cleaned_opinions.append(opinion_buf[0][1:])
             opinion = opinion_buf[1]
             flag = True
+        cleaned_opinions.append(opinion)
       if not flag:
         for spliter in split_list:
           if spliter in opinion:
