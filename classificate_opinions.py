@@ -87,7 +87,8 @@ class ClassificateOpinions():
             node[i] = pr.preprocessing(node[i])
 
             # 形態素解析
-            mecab = MeCab.Tagger("-Ochasen -d /usr/lib/mecab/dic/mecab-ipadic-neologd")
+            # mecab = MeCab.Tagger("-Ochasen -d /usr/lib/mecab/dic/mecab-ipadic-neologd")
+            mecab = MeCab.Tagger("-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
             mecab.parse("")
 
             list_splitted_n = []
@@ -96,7 +97,7 @@ class ClassificateOpinions():
                 word = splitted_n.feature.split(",")[6]
                 clas = splitted_n.feature.split(",")[0]
                 if clas == u"名詞" or clas == u"動詞": # 名詞と動詞のみを抽出
-                    if not word in ngwords_origin:
+                    if not word in self.ngwords_origin:
                         if not word == "子":
                             list_splitted_n.append(word)
                         else:
@@ -107,7 +108,7 @@ class ClassificateOpinions():
             for j in range(len(tokenized_opinions[i]) - 1):
                 if j > len(tokenized_opinions[i]) - 1:
                     break
-                for w in unique_words:
+                for w in self.unique_words:
                     if tokenized_opinions[i][j] == w[0] and tokenized_opinions[i][j+1] == w[1]:
                         tokenized_opinions[i][j] += tokenized_opinions[i][j+1]
                         del tokenized_opinions[i][j+1]
@@ -124,4 +125,4 @@ class ClassificateOpinions():
                 tokenized_opinions[i].remove("子供")
                 tokenized_opinions[i].append("子供の家")
                 cnt -= 1
-    return tokenized_opinions
+        return tokenized_opinions
