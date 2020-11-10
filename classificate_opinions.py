@@ -1,6 +1,8 @@
 import mojimoji as mj
 import copy
 import networkx as nx
+import preprocessing as pr
+import MeCab
 
 
 class ClassificateOpinions():
@@ -16,6 +18,7 @@ class ClassificateOpinions():
     def __init__(self, opinions):
         self.opinions = opinions
         self.create_stopwords_list()
+        self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
 
     def classificate(self):
         self.opinions = self.text_cleaning(self.opinions)
@@ -77,3 +80,48 @@ class ClassificateOpinions():
         ngwords_origin = copy.deepcopy(ngwords)
         self.ngwords = ngwords
         self.ngwords_origin = ngwords
+
+    def tokenize(self, node):
+        tokenized_opinions = []
+        for i in range(len(node)):
+            node[i] = pr.preprocessing(node[i])
+
+            # 形態素解析
+            mecab = MeCab.Tagger("-Ochasen -d /usr/lib/mecab/dic/mecab-ipadic-neologd")
+            mecab.parse("")
+
+            list_splitted_n = []
+            splitted_n = mecab.parseToNode(node[i])
+            while splitted_n:
+                word = splitted_n.feature.split(",")[6]
+                clas = splitted_n.feature.split(",")[0]
+                if clas == u"名詞" or clas == u"動詞": # 名詞と動詞のみを抽出
+                    if not word in ngwords_origin:
+                        if not word == "子":
+                            list_splitted_n.append(word)
+                        else:
+                            list_splitted_n.append("子供")
+                splitted_n = splitted_n.next
+            tokenized_opinions.append(list_splitted_n)
+
+            for j in range(len(tokenized_opinions[i]) - 1):
+                if j > len(tokenized_opinions[i]) - 1:
+                    break
+                for w in unique_words:
+                    if tokenized_opinions[i][j] == w[0] and tokenized_opinions[i][j+1] == w[1]:
+                        tokenized_opinions[i][j] += tokenized_opinions[i][j+1]
+                        del tokenized_opinions[i][j+1]
+                        j -= 1
+            cnt = node[i].count("退園")#”退園”を形態素解析すると”園”になってしまう問題
+            while cnt > 0:
+                if "退る" in tokenized_opinions[i]:
+                    tokenized_opinions[i].remove("退る")
+                tokenized_opinions[i].remove("園")
+                tokenized_opinions[i].append("退園")
+                cnt -= 1
+            cnt = node[i].count("子供の家")#”子供の家”を形態素解析すると”子供”になってしまう問題
+            while cnt > 0:
+                tokenized_opinions[i].remove("子供")
+                tokenized_opinions[i].append("子供の家")
+                cnt -= 1
+    return tokenized_opinions
