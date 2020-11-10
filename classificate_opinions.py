@@ -14,28 +14,16 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.opinions = opinions
+        self.create_stopwords_list()
 
     def classificate(self):
+        self.opinions = self.text_cleaning(self.opinions)
         pass
 
     def text_cleaning(self, opinions):
         splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
         splitted_opinions = self.num_zen_to_han(splitted_opinions)  # 数字の全角を半角へ
-        # ストップワーズの除去
-        ngwords = []
-        stopwords = open('stopwords.txt', 'r')  # SlothLib + etc
-        for line in stopwords:
-            ngwords.append(line.rstrip('\n'))
-        stopwords.close()
-        for i in range(12353, 12436):  # 平仮名一文字
-            ngwords.append(chr(i))
-        for i in range(12449, 12533):  # 片仮名一文字
-            ngwords.append(chr(i))
-        for i in range(97, 97+26):  # アルファベット小文字
-            ngwords.append(chr(i))
-        for i in range(65, 65+26):  # アルファベット大文字
-            ngwords.append(chr(i))
-        ngwords_origin = copy.deepcopy(ngwords)
+        return splitted_opinions
         pass
 
     def text_splitter(self, opinions):
@@ -65,3 +53,21 @@ class ClassificateOpinions():
         for i in range(len(opinions)):
             opinions[i] = mj.zen_to_han(opinions[i], kana=False, ascii=False)
         return opinions
+
+    def create_stopwords_list(self):
+        ngwords = []
+        stopwords = open('stopwords.txt', 'r')  # SlothLib + etc
+        for line in stopwords:
+            ngwords.append(line.rstrip('\n'))
+        stopwords.close()
+        for i in range(12353, 12436):  # 平仮名一文字
+            ngwords.append(chr(i))
+        for i in range(12449, 12533):  # 片仮名一文字
+            ngwords.append(chr(i))
+        for i in range(97, 97+26):  # アルファベット小文字
+            ngwords.append(chr(i))
+        for i in range(65, 65+26):  # アルファベット大文字
+            ngwords.append(chr(i))
+        ngwords_origin = copy.deepcopy(ngwords)
+        self.ngwords = ngwords
+        self.ngwords_origin = ngwords
