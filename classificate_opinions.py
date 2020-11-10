@@ -1,5 +1,6 @@
 import mojimoji as mj
 import copy
+import networkx as nx
 
 
 class ClassificateOpinions():
@@ -18,6 +19,11 @@ class ClassificateOpinions():
 
     def classificate(self):
         self.opinions = self.text_cleaning(self.opinions)
+        # Detailをノード化
+        gr = nx.Graph()
+        for i in range(len(self.opinions)):
+            gr.add_node(list_detail[i].replace('\\u3000', ''))#空白が"\u3000"として読み込まれてしまうので削除しておく
+        node_list = node_buf = list(gr.nodes)
         pass
 
     def text_cleaning(self, opinions):
