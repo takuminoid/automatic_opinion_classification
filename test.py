@@ -1,14 +1,15 @@
 from classificate_opinions import ClassificateOpinions
 
+
 def res(num, out, ans):
     if out == ans:
         print(num, 'ok')
     else:
         print(num, 'error')
         print('expected is ', ans, ', your out is', out)
-    
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     c = ClassificateOpinions(['こんにちは。・おはよう', 'こんばんは'])
 
     # def text_spiliter
@@ -26,7 +27,7 @@ if __name__=="__main__":
     ans = 560
     res(3, out, ans)
 
-    # def tokenize 
+    # def tokenize
     out = c.tokenize(['今日で子供の家を退園します', '児童クラブを増やして欲しい'])
     ans = [['今日', '退園', '子供の家'], ['児童クラブ', '増やす']]
     res(4, out, ans)
