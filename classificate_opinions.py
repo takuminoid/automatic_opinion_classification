@@ -1,3 +1,6 @@
+import sys
+sys.path.append('./lib/')
+
 import mojimoji as mj
 import copy
 import networkx as nx
@@ -66,7 +69,7 @@ class ClassificateOpinions():
 
     def create_stopwords_list(self):
         ngwords = []
-        stopwords = open('stopwords.txt', 'r')  # SlothLib + etc
+        stopwords = open('data/stopwords.txt', 'r')  # SlothLib + etc
         for line in stopwords:
             ngwords.append(line.rstrip('\n'))
         stopwords.close()

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('./')
 from classificate_opinions import ClassificateOpinions
 
 
