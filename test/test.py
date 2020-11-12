@@ -1,5 +1,6 @@
 import sys
 sys.path.append('./')
+
 from classificate_opinions import ClassificateOpinions
 
 
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     res(4, out, ans)
 
     c.node_buf = list(c.gr.nodes)
-    
+
     # _def create_stopwords_list
     out = len(c.ngwords)
     ans = 560
@@ -55,7 +56,8 @@ if __name__ == "__main__":
     res(7, out, ans)
 
     # def remove_minority_opinions
-    c.remove_minority_opinions([['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす'], []])
+    c.remove_minority_opinions(
+        [['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす'], []])
     out = len(c.gr.nodes)
     ans = 3
     res(8, out, ans)

@@ -26,11 +26,12 @@ class ClassificateOpinions():
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
         self.gr = nx.Graph()
         self.node_buf = []
-        self.mecab = MeCab.Tagger("-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
+        self.mecab = MeCab.Tagger(
+            "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
-        self.create_graph(self.opinions) # 意見をノード化
+        self.create_graph(self.opinions)  # 意見をノード化
         node_list, self.node_buf = list(self.gr.nodes), list(self.gr.nodes)
         tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
         self.remove_minority_opinions(tokenized_opinions)
@@ -165,11 +166,12 @@ class ClassificateOpinions():
                         break
                     for j in range(len_t2):
                         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
-                            self.gr.add_edge(self.node_buf[t1], self.node_buf[t2])
+                            self.gr.add_edge(
+                                self.node_buf[t1], self.node_buf[t2])
                             flag = True
                             break
                         elif tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
                             if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
                                 cnt += 1
-                            else: # 動詞の場合
+                            else:  # 動詞の場合
                                 cnt += 0.7
