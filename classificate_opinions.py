@@ -3,6 +3,8 @@ import copy
 import networkx as nx
 from lib import preprocessing as pr
 import MeCab
+from collections import Counter
+import math
 
 
 class ClassificateOpinions():
@@ -23,11 +25,13 @@ class ClassificateOpinions():
     def classificate(self):
         self.opinions = self.text_cleaning(self.opinions)
         # Detailをノード化
-        gr = nx.Graph()
+        self.gr = nx.Graph()
         for i in range(len(self.opinions)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
-            gr.add_node(list_detail[i].replace('\\u3000', ''))
-        node_list = node_buf = list(gr.nodes)
+            self.gr.add_node(self.opinions[i].replace('\\u3000', ''))
+        node_list, node_buf = list(self.gr.nodes), list(self.gr.nodes)
+        tokenized_opinions = self.tokenize(node_list)
+        tokenized_opinions = self.remove_stopwords(tokenized_opinions)
         pass
 
     def text_cleaning(self, opinions):
@@ -81,6 +85,19 @@ class ClassificateOpinions():
         ngwords_origin = copy.deepcopy(ngwords)
         self.ngwords = ngwords
         self.ngwords_origin = ngwords
+    
+    def remove_stopwords(self, tokenized_opinions):
+        words, important_words, res = [], [], []
+        for t in tokenized_opinions:
+            words.extend(t)
+        for word, cnt in Counter(words).most_common():
+            if cnt <= math.floor(0.035*len(self.gr.nodes)) or cnt >= math.ceil(0.6*len(self.gr.nodes)):
+                self.ngwords.append(word)
+            else:
+                important_words.append(word)
+        for t in tokenized_opinions:
+            res.append([u for u in t if not u in self.ngwords])
+        return res
 
     def tokenize(self, node):
         tokenized_opinions = []
@@ -100,10 +117,7 @@ class ClassificateOpinions():
                 clas = splitted_n.feature.split(",")[0]
                 if clas == u"名詞" or clas == u"動詞":  # 名詞と動詞のみを抽出
                     if not word in self.ngwords_origin:
-                        if not word == "子":
-                            list_splitted_n.append(word)
-                        else:
-                            list_splitted_n.append("子供")
+                        list_splitted_n.append(word)
                 splitted_n = splitted_n.next
             tokenized_opinions.append(list_splitted_n)
 
