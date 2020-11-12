@@ -22,14 +22,14 @@ class ClassificateOpinions():
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
 
-    def classificate(self):
+    def classificate(self): # main
         self.opinions = self.text_cleaning(self.opinions)
         # Detailをノード化
         self.gr = nx.Graph()
         for i in range(len(self.opinions)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
             self.gr.add_node(self.opinions[i].replace('\\u3000', ''))
-        node_list, node_buf = list(self.gr.nodes), list(self.gr.nodes)
+        node_list, self.node_buf = list(self.gr.nodes), list(self.gr.nodes)
         tokenized_opinions = self.tokenize(node_list)
         tokenized_opinions = self.remove_stopwords(tokenized_opinions)
         pass
@@ -142,3 +142,8 @@ class ClassificateOpinions():
                 tokenized_opinions[i].append("子供の家")
                 cnt -= 1
         return tokenized_opinions
+
+    def remove_minority_opinions(self, tokenized_opinions):
+        for i in range(len(tokenized_opinions)):
+            if len(tokenized_opinions[i]) <= 0:
+                self.gr.remove_node(self.node_buf[i])
