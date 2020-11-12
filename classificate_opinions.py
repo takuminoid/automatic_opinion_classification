@@ -1,10 +1,7 @@
-import sys
-sys.path.append('./lib/')
-
 import mojimoji as mj
 import copy
 import networkx as nx
-import preprocessing as pr
+from lib import preprocessing as pr
 import MeCab
 
 
