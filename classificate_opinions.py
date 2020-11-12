@@ -21,17 +21,14 @@ class ClassificateOpinions():
         self.opinions = opinions
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
+        self.gr = nx.Graph()
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
-        # 意見をノード化
-        self.gr = nx.Graph()
-        for i in range(len(self.opinions)):
-            # 空白が"\u3000"として読み込まれてしまうので削除しておく
-            self.gr.add_node(self.opinions[i].replace('\\u3000', ''))
+        self.create_graph(self.opinions) # 意見をノード化
         node_list, self.node_buf = list(self.gr.nodes), list(self.gr.nodes)
-        tokenized_opinions = self.tokenize(node_list)
-        tokenized_opinions = self.remove_stopwords(tokenized_opinions)
+        tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
+        self.remove_minority_opinions(tokenized_opinions)
         pass
 
     def text_cleaning(self, opinions):
@@ -67,6 +64,11 @@ class ClassificateOpinions():
         for i in range(len(opinions)):
             opinions[i] = mj.zen_to_han(opinions[i], kana=False, ascii=False)
         return opinions
+
+    def create_graph(self, node):
+        for i in range(len(node)):
+            # 空白が"\u3000"として読み込まれてしまうので削除しておく
+            self.gr.add_node(node[i].replace('\\u3000', ''))
 
     def create_stopwords_list(self):
         ngwords = []

@@ -12,8 +12,9 @@ def res(num, out, ans):
 
 
 if __name__ == "__main__":
-    c = ClassificateOpinions(['こんにちは。・おはよう', 'こんばんは', ''])
-    c.classificate()
+    value = ['こんにちは。・おはよう', 'こんばんは', 'あ']
+    c = ClassificateOpinions(value)
+    # c.classificate()
 
     # def text_spiliter
     out = c.text_splitter(['こんにちは。・おはよう', '①こんばんは②そうなのですか'])
@@ -25,23 +26,33 @@ if __name__ == "__main__":
     ans = ['12おはよう', '34です', 'おは56']
     res(2, out, ans)
 
+    # def create_graph
+    out = len(c.gr.nodes)
+    ans = 0
+    res(3, out, ans)
+
+    c.create_graph(c.opinions)
+    out = len(c.gr.nodes)
+    ans = len(value)
+    res(4, out, ans)
+    
     # def create_stopwords_list
     out = len(c.ngwords)
     ans = 560
-    res(3, out, ans)
+    res(5, out, ans)
 
     # def tokenize
     out = c.tokenize(['今日で子供の家を退園します', '児童クラブを増やして欲しい'])
     ans = [['今日', '退園', '子供の家'], ['児童クラブ', '増やす']]
-    res(4, out, ans)
+    res(6, out, ans)
 
     # def remove_stopwords
     out = c.remove_stopwords([['今日', '今日', '明日'], ['今日', '昨日']])
     ans = [['明日'], ['昨日']]
-    res(5, out, ans)
+    res(7, out, ans)
 
     # def remove_minority_opinions
-    c.remove_minority_opinions(['こんにちは', 'おはよう', 'こんばんは', ''])
+    c.remove_minority_opinions(['こんにちは', 'おはよう', 'こんばんは', 'あ'])
     out = len(c.gr.nodes)
     ans = 3
-    res(6, out, ans)
+    res(8, out, ans)
