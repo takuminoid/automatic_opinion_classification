@@ -24,7 +24,7 @@ class ClassificateOpinions():
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
-        # Detailをノード化
+        # 意見をノード化
         self.gr = nx.Graph()
         for i in range(len(self.opinions)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
@@ -104,7 +104,6 @@ class ClassificateOpinions():
             node[i] = pr.preprocessing(node[i])
 
             # 形態素解析
-            # mecab = MeCab.Tagger("-Ochasen -d /usr/lib/mecab/dic/mecab-ipadic-neologd")
             mecab = MeCab.Tagger(
                 "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
             mecab.parse("")
@@ -128,14 +127,14 @@ class ClassificateOpinions():
                         tokenized_opinions[i][j] += tokenized_opinions[i][j+1]
                         del tokenized_opinions[i][j+1]
                         j -= 1
-            cnt = node[i].count("退園")  # ”退園”を形態素解析すると”園”になってしまう問題
+            cnt = node[i].count("退園")
             while cnt > 0:
                 if "退る" in tokenized_opinions[i]:
                     tokenized_opinions[i].remove("退る")
                 tokenized_opinions[i].remove("園")
                 tokenized_opinions[i].append("退園")
                 cnt -= 1
-            cnt = node[i].count("子供の家")  # ”子供の家”を形態素解析すると”子供”になってしまう問題
+            cnt = node[i].count("子供の家")
             while cnt > 0:
                 tokenized_opinions[i].remove("子供")
                 tokenized_opinions[i].append("子供の家")
