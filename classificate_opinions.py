@@ -22,7 +22,7 @@ class ClassificateOpinions():
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
 
-    def classificate(self): # main
+    def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
         # Detailをノード化
         self.gr = nx.Graph()
@@ -83,9 +83,8 @@ class ClassificateOpinions():
         for i in range(65, 65+26):  # アルファベット大文字
             ngwords.append(chr(i))
         ngwords_origin = copy.deepcopy(ngwords)
-        self.ngwords = ngwords
-        self.ngwords_origin = ngwords
-    
+        self.ngwords, self.ngwords_origin = ngwords, ngwords
+
     def remove_stopwords(self, tokenized_opinions):
         words, important_words, res = [], [], []
         for t in tokenized_opinions:
