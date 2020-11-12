@@ -12,7 +12,7 @@ def res(num, out, ans):
 
 
 if __name__ == "__main__":
-    c = ClassificateOpinions(['こんにちは。・おはよう', 'こんばんは'])
+    c = ClassificateOpinions(['こんにちは。・おはよう', 'こんばんは', ''])
     c.classificate()
 
     # def text_spiliter
@@ -39,3 +39,9 @@ if __name__ == "__main__":
     out = c.remove_stopwords([['今日', '今日', '明日'], ['今日', '昨日']])
     ans = [['明日'], ['昨日']]
     res(5, out, ans)
+
+    # def remove_minority_opinions
+    c.remove_minority_opinions(['こんにちは', 'おはよう', 'こんばんは', ''])
+    out = len(c.gr.nodes)
+    ans = 3
+    res(6, out, ans)
