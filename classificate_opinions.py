@@ -19,11 +19,13 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
+        self.ngwords, ngwords_origin = "", ""
 
         self.opinions = opinions
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
         self.gr = nx.Graph()
+        self.node_buf = []
         self.mecab = MeCab.Tagger("-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
 
     def classificate(self):  # main
@@ -153,7 +155,7 @@ class ClassificateOpinions():
             if len_t1 <= self.thres_minority_opinion_words:
                 continue
             for t2 in range(t1+1, len(tokenized_opinions)):
-                if gr.has_edge(self.node_buf[t1], self.node_buf[t2]):
+                if self.gr.has_edge(self.node_buf[t1], self.node_buf[t2]):
                     continue
                 cnt, flag, len_t2 = 0, False, len(tokenized_opinions[t2])
                 if len_t2 <= self.thres_minority_opinion_words:

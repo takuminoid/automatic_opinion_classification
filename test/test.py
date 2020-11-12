@@ -12,7 +12,8 @@ def res(num, out, ans):
 
 
 if __name__ == "__main__":
-    opinions = ['今日で子供の家を退園します', '児童クラブを増やして欲しい', 'あ']
+    # opinions = ['今日で子供の家を退園します', '児童クラブを増やして欲しい', 'あ']
+    opinions = ['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！', '学童を増やして欲しいです', 'あ']
     c = ClassificateOpinions(opinions)
     # c.classificate()
 
@@ -35,15 +36,17 @@ if __name__ == "__main__":
     out = len(c.gr.nodes)
     ans = len(opinions)
     res(4, out, ans)
+
+    c.node_buf = list(c.gr.nodes)
     
-    # def create_stopwords_list
+    # _def create_stopwords_list
     out = len(c.ngwords)
     ans = 560
     res(5, out, ans)
 
     # _def tokenize
-    out = c.tokenize(['今日で子供の家を退園します', '児童クラブを増やして欲しい'])
-    ans = [['今日', '退園', '子供の家'], ['児童クラブ', '増やす']]
+    out = c.tokenize(['保育園の数が少なく入れるか不安', '保育園の数を増やして！', '学童を増やして欲しいです'])
+    ans = [['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす']]
     res(6, out, ans)
 
     # _def remove_stopwords
@@ -52,7 +55,12 @@ if __name__ == "__main__":
     res(7, out, ans)
 
     # def remove_minority_opinions
-    c.remove_minority_opinions(['今日で子供の家を退園します', '児童クラブを増やして欲しい', 'あ'])
+    c.remove_minority_opinions([['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす'], []])
     out = len(c.gr.nodes)
     ans = 3
     res(8, out, ans)
+
+    c.connect_edge([['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす']])
+    out = len(c.gr.edges)
+    ans = 1
+    res(9, out, ans)
