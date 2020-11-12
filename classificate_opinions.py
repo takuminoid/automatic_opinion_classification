@@ -35,7 +35,6 @@ class ClassificateOpinions():
         splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
         splitted_opinions = self.num_zen_to_han(splitted_opinions)  # 数字の全角を半角へ
         return splitted_opinions
-        pass
 
     def text_splitter(self, opinions):
         splitted_opinions = []
