@@ -18,10 +18,13 @@ class ClassificateOpinions():
     '''
 
     def __init__(self, opinions):
+        self.thres_minority_opinion_words = 0
+
         self.opinions = opinions
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
         self.gr = nx.Graph()
+        self.mecab = MeCab.Tagger("-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
@@ -104,13 +107,9 @@ class ClassificateOpinions():
         for i in range(len(node)):
             node[i] = pr.preprocessing(node[i])
 
-            # 形態素解析
-            mecab = MeCab.Tagger(
-                "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
-            mecab.parse("")
-
+            self.mecab.parse("")
             list_splitted_n = []
-            splitted_n = mecab.parseToNode(node[i])
+            splitted_n = self.mecab.parseToNode(node[i])
             while splitted_n:
                 word = splitted_n.feature.split(",")[6]
                 clas = splitted_n.feature.split(",")[0]
@@ -144,5 +143,31 @@ class ClassificateOpinions():
 
     def remove_minority_opinions(self, tokenized_opinions):
         for i in range(len(tokenized_opinions)):
-            if len(tokenized_opinions[i]) <= 0:
+            if len(tokenized_opinions[i]) <= self.thres_minority_opinion_words:
                 self.gr.remove_node(self.node_buf[i])
+
+    def connect_edge(self, tokenized_opinions):
+        self.mecab.parse("")
+        for t1 in range(len(tokenized_opinions)-1):
+            len_t1 = len(tokenized_opinions[t1])
+            if len_t1 <= self.thres_minority_opinion_words:
+                continue
+            for t2 in range(t1+1, len(tokenized_opinions)):
+                if gr.has_edge(self.node_buf[t1], self.node_buf[t2]):
+                    continue
+                cnt, flag, len_t2 = 0, False, len(tokenized_opinions[t2])
+                if len_t2 <= self.thres_minority_opinion_words:
+                    continue
+                for i in range(len_t1):
+                    if flag:
+                        break
+                    for j in range(len_t2):
+                        if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
+                            self.gr.add_edge(self.node_buf[t1], self.node_buf[t2])
+                            flag = True
+                            break
+                        elif tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
+                            if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
+                                cnt += 1
+                            else: # 動詞の場合
+                                cnt += 0.7
