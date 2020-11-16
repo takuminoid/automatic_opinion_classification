@@ -72,3 +72,9 @@ if __name__ == "__main__":
     ans = [['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！'], [
         '保育園の数を増やしてください！', '保育園の数が少なく入れるか不安'], ['学童を増やして欲しいです']]
     res(10, out, ans)
+
+    # _def extract_large_cliques
+    out = c.extract_large_cliques([['a', 'b'], [
+        'a', 'c', 'b'], ['c']])
+    ans = [['a', 'c', 'b']]
+    res(11, out, ans)
