@@ -105,6 +105,5 @@ if __name__ == "__main__":
 
     # __def extract_clusters_large
     out = c.extract_clusters_large(c.gr2, ex_large_cliques)
-    ans = [['a', 'b', 'w', 'z', 'y']]
-    res(15, out, ans)
-    
+    ans = [['a', 'w', 'y', 'z', 'b']]
+    res(15, set(out[0]), set(ans[0])) # リストの中身は順不同
