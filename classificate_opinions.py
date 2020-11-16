@@ -222,6 +222,7 @@ class ClassificateOpinions():
         large_cliques = extract_large_cliques(maximal_cliques)
         self.create_graph(self.gr2, large_cliques)
         self.connect_edge_large(large_cliques)
+        self.extract_clusters_large(self.gr2, large_cliques)
     
     def extract_large_cliques(self, maximal_cliques):
         large_cliques, buf = [], []
@@ -254,3 +255,28 @@ class ClassificateOpinions():
                 per = cnt * 100 / min(len(maximal_cliques[q]), len(maximal_cliques[p]))
                 if per >= 50:
                     self.gr2.add_edge(p, q)
+
+    def extract_clusters_large(self, gr, large_cliques): # Depth First Search
+        visit, indexs, clusters = [], [], []
+        for n in gr.nodes:
+            visit.append(n)
+            buf, stack = [n], []
+            for to in nx.all_neighbors(gr, n):
+                stack.append(to)
+            while len(stack) > 0:
+                to = stack.pop()
+                if not to in visit:
+                    visit.append(to)
+                    buf.append(to)
+                    for toto in nx.all_neighbors(gr, to):
+                        if not toto in visit or not toto in buf:
+                            stack.append(toto)
+            indexs.append(buf)
+        for index_list in indexs:
+            buf = []
+            if len(index_list) > 1:
+                for i in index_list:
+                    buf.extend(large_cliques[i])
+                set1 = set(buf)
+                clusters.append(list(set1))
+        return clusters
