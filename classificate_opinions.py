@@ -79,6 +79,10 @@ class ClassificateOpinions():
         for i in range(len(node)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
             gr.add_node(node[i].replace('\\u3000', ''))
+    
+    def create_graph_index(self, gr, node):
+        for i in range(len(node)):
+            gr.add_node(i)
 
     def create_stopwords_list(self):
         ngwords = []
@@ -220,9 +224,10 @@ class ClassificateOpinions():
 
     def create_clusters_from_larges(self, maximal_cliques):
         large_cliques = extract_large_cliques(maximal_cliques)
-        self.create_graph(self.gr2, large_cliques)
+        self.create_graph_index(self.gr2, large_cliques)
         self.connect_edge_large(large_cliques)
-        self.extract_clusters_large(self.gr2, large_cliques)
+        clusters = self.extract_clusters_large(self.gr2, large_cliques)
+        return clusters
     
     def extract_large_cliques(self, maximal_cliques):
         large_cliques, buf = [], []
@@ -241,18 +246,18 @@ class ClassificateOpinions():
             buf.append(l)
         return large_cliques
 
-    def connect_edge_large(self, maximal_cliques):
-        for q in range(0, len(maximal_cliques)-1):
-            for p in range(q+1, len(maximal_cliques)):
+    def connect_edge_large(self, large_cliques):
+        for q in range(0, len(large_cliques)-1):
+            for p in range(q+1, len(large_cliques)):
                 if self.gr2.has_edge(p, q):
                     continue
                 cnt = 0
-                for k in range(len(maximal_cliques[q])):
-                    for l in range(len(maximal_cliques[p])):
-                        if maximal_cliques[q][k] == maximal_cliques[p][l]:
+                for k in range(len(large_cliques[q])):
+                    for l in range(len(large_cliques[p])):
+                        if large_cliques[q][k] == large_cliques[p][l]:
                             cnt += 1
                             break
-                per = cnt * 100 / min(len(maximal_cliques[q]), len(maximal_cliques[p]))
+                per = cnt * 100 / min(len(large_cliques[q]), len(large_cliques[p]))
                 if per >= 50:
                     self.gr2.add_edge(p, q)
 
