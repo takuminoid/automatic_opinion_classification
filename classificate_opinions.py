@@ -27,7 +27,7 @@ class ClassificateOpinions():
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
         self.gr = nx.Graph()
-        self.gr2 = nx.Graph() # large_cliques
+        self.gr2 = nx.Graph()  # large_cliques
         self.node_buf = []
         self.mecab = MeCab.Tagger(
             "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
@@ -83,7 +83,7 @@ class ClassificateOpinions():
         for i in range(len(node)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
             gr.add_node(node[i].replace('\\u3000', ''))
-    
+
     def create_graph_index(self, gr, node):
         for i in range(len(node)):
             gr.add_node(i)
@@ -234,10 +234,11 @@ class ClassificateOpinions():
         tokenized_clusters = self.tokenize_clusters(clusters)
         self.check_words_in_cluster(clusters, tokenized_clusters)
         # return clusters
-    
+
     def extract_large_cliques(self, maximal_cliques):
         large_cliques, buf = [], []
-        floor = math.floor(len(self.gr.nodes)/6) if (len(self.gr.nodes)/6) > 1 else 1
+        floor = math.floor(len(self.gr.nodes)/6) \
+            if (len(self.gr.nodes)/6) > 1 else 1
         for i in range(floor):
             mac = 0
             if len(buf) == len(maximal_cliques):
@@ -263,11 +264,12 @@ class ClassificateOpinions():
                         if large_cliques[q][k] == large_cliques[p][l]:
                             cnt += 1
                             break
-                per = cnt * 100 / min(len(large_cliques[q]), len(large_cliques[p]))
+                per = cnt * 100 / \
+                    min(len(large_cliques[q]), len(large_cliques[p]))
                 if per >= 50:
                     self.gr2.add_edge(p, q)
 
-    def extract_clusters_large(self, gr, large_cliques): # Depth First Search
+    def extract_clusters_large(self, gr, large_cliques):  # Depth First Search
         visit, indexs, clusters = [], [], []
         for n in gr.nodes:
             visit.append(n)
@@ -343,6 +345,5 @@ class ClassificateOpinions():
             for word, cnt in counter.most_common():
                 if self.important_words[k] == word:
                     self.clusters.append(clusters[k])
-        for i range(len(self.clusters)):
+        for i in range(len(self.clusters)):
             self.labels.append(self.important_words[i])
-        
