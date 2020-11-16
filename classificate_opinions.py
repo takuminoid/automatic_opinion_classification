@@ -20,7 +20,7 @@ class ClassificateOpinions():
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
         self.thres_loop_extract_clique = 1000000
-        
+
         self.ngwords, ngwords_origin = "", ""
         self.opinions = opinions
         self.create_stopwords_list()
@@ -37,6 +37,7 @@ class ClassificateOpinions():
         tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
         self.remove_minority_opinions(tokenized_opinions)
         self.connect_edge(tokenized_opinions)
+        self.extract_maximal_cliques()
         pass
 
     def text_cleaning(self, opinions):
@@ -179,26 +180,27 @@ class ClassificateOpinions():
                                 cnt += 0.7
 
     def extract_maximal_cliques(self):
-        clusters = []
+        maximal_cliques = []
         for n in self.gr.nodes:
-            cnt_loop, list_n, list_size, buf, stack, depth = 0, [[n]], [1], [n], [], []
+            cnt_loop = 0
+            list_n, list_size, buf, stack, depth = [[n]], [1], [n], [], []
             for to in nx.all_neighbors(self.gr, n):
                 stack.append(to)
                 depth.append(len(buf))
             while len(stack) > 0:
                 to, dep = stack.pop(), depth.pop()
-                while True: # bufをdepと同じ長さになるまで消してく
-                    if len(buf) < dep: 
+                while True:  # bufをdepと同じ長さになるまで消してく
+                    if len(buf) < dep:
                         print("error")
                     if len(buf) == dep:
                         break
                     buf.pop()
                 flag = True
-                for i in buf: # 今出き上がっているbufのノードと全て繋がっているかをみる
-                    if not self.gr.has_edge(to, i): # to -> i に辺があるかを見る
+                for i in buf:  # 今出き上がっているbufのノードと全て繋がっているかをみる
+                    if not self.gr.has_edge(to, i):  # to -> i に辺があるかを見る
                         flag = False
                         break
-                if flag: # 全てと隣接していたらbufにアペンド
+                if flag:  # 全てと隣接していたらbufにアペンド
                     buf.append(to)
                     for toto in nx.all_neighbors(self.gr, to):
                         if not toto in buf:
@@ -211,5 +213,5 @@ class ClassificateOpinions():
                 if cnt_loop > self.thres_loop_extract_clique:
                     break
             k = list_size.index(max(list_size))
-            clusters.append(list_n[k])
-        return clusters
+            maximal_cliques.append(list_n[k])
+        return maximal_cliques

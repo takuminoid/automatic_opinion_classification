@@ -1,6 +1,5 @@
 import sys
 sys.path.append('./')
-
 from classificate_opinions import ClassificateOpinions
 
 
@@ -70,5 +69,6 @@ if __name__ == "__main__":
 
     # def extract_maximul_cliques
     out = c.extract_maximal_cliques()
-    ans = [['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！'], ['保育園の数を増やしてください！', '保育園の数が少なく入れるか不安'], ['学童を増やして欲しいです']]
+    ans = [['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！'], [
+        '保育園の数を増やしてください！', '保育園の数が少なく入れるか不安'], ['学童を増やして欲しいです']]
     res(10, out, ans)
