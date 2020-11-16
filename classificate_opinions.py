@@ -37,7 +37,8 @@ class ClassificateOpinions():
         tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
         self.remove_minority_opinions(tokenized_opinions)
         self.connect_edge(tokenized_opinions)
-        self.extract_maximal_cliques()
+        maximal_cliques = self.extract_maximal_cliques()
+        large_cliques = self.extract_large_cliques(maximal_cliques)
         pass
 
     def text_cleaning(self, opinions):
@@ -215,3 +216,20 @@ class ClassificateOpinions():
             k = list_size.index(max(list_size))
             maximal_cliques.append(list_n[k])
         return maximal_cliques
+
+    def extract_large_cliques(self, maximal_cliques):
+        large_cliques, buf = [], []
+        floor = math.floor(len(self.gr.nodes)/6) if (len(self.gr.nodes)/6) > 1 else 1
+        for i in range(floor):
+            mac = 0
+            if len(buf) == len(maximal_cliques):
+                break
+            for j in range(len(maximal_cliques)):
+                if j in buf:
+                    continue
+                mac = max(mac, len(maximal_cliques[j]))
+                if mac == len(maximal_cliques[j]):
+                    l = j
+            large_cliques.append(maximal_cliques[l])
+            buf.append(l)
+        return large_cliques
