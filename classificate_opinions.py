@@ -26,13 +26,14 @@ class ClassificateOpinions():
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
         self.gr = nx.Graph()
+        self.gr2 = nx.Graph() # large_cliques
         self.node_buf = []
         self.mecab = MeCab.Tagger(
             "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
-        self.create_graph(self.opinions)  # 意見をノード化
+        self.create_graph(self.gr, self.opinions)  # 意見をノード化
         node_list, self.node_buf = list(self.gr.nodes), list(self.gr.nodes)
         tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
         self.remove_minority_opinions(tokenized_opinions)
@@ -74,10 +75,10 @@ class ClassificateOpinions():
             opinions[i] = mj.zen_to_han(opinions[i], kana=False, ascii=False)
         return opinions
 
-    def create_graph(self, node):
+    def create_graph(self, gr, node):
         for i in range(len(node)):
             # 空白が"\u3000"として読み込まれてしまうので削除しておく
-            self.gr.add_node(node[i].replace('\\u3000', ''))
+            gr.add_node(node[i].replace('\\u3000', ''))
 
     def create_stopwords_list(self):
         ngwords = []
@@ -233,3 +234,6 @@ class ClassificateOpinions():
             large_cliques.append(maximal_cliques[l])
             buf.append(l)
         return large_cliques
+
+    def create_clusters_from_larges(self, maximal_cliques):
+        self.create_graph(self.gr2, maximal_cliques)

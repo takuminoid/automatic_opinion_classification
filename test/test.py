@@ -32,7 +32,7 @@ if __name__ == "__main__":
     ans = 0
     res(3, out, ans)
 
-    c.create_graph(c.opinions)
+    c.create_graph(c.gr, c.opinions)
     out = len(c.gr.nodes)
     ans = len(opinions)
     res(4, out, ans)
