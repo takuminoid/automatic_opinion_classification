@@ -39,7 +39,7 @@ class ClassificateOpinions():
         self.remove_minority_opinions(tokenized_opinions)
         self.connect_edge(tokenized_opinions)
         maximal_cliques = self.extract_maximal_cliques()
-        large_cliques = self.extract_large_cliques(maximal_cliques)
+        self.create_clusters_from_larges(maximal_cliques)
         pass
 
     def text_cleaning(self, opinions):
@@ -218,6 +218,11 @@ class ClassificateOpinions():
             maximal_cliques.append(list_n[k])
         return maximal_cliques
 
+    def create_clusters_from_larges(self, maximal_cliques):
+        large_cliques = extract_large_cliques(maximal_cliques)
+        self.create_graph(self.gr2, large_cliques)
+        self.connect_edge_large(large_cliques)
+    
     def extract_large_cliques(self, maximal_cliques):
         large_cliques, buf = [], []
         floor = math.floor(len(self.gr.nodes)/6) if (len(self.gr.nodes)/6) > 1 else 1
@@ -235,5 +240,17 @@ class ClassificateOpinions():
             buf.append(l)
         return large_cliques
 
-    def create_clusters_from_larges(self, maximal_cliques):
-        self.create_graph(self.gr2, maximal_cliques)
+    def connect_edge_large(self, maximal_cliques):
+        for q in range(0, len(maximal_cliques)-1):
+            for p in range(q+1, len(maximal_cliques)):
+                if self.gr2.has_edge(p, q):
+                    continue
+                cnt = 0
+                for k in range(len(maximal_cliques[q])):
+                    for l in range(len(maximal_cliques[p])):
+                        if maximal_cliques[q][k] == maximal_cliques[p][l]:
+                            cnt += 1
+                            break
+                per = cnt * 100 / min(len(maximal_cliques[q]), len(maximal_cliques[p]))
+                if per >= 50:
+                    self.gr2.add_edge(p, q)
