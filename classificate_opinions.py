@@ -21,7 +21,8 @@ class ClassificateOpinions():
         self.thres_minority_opinion_words = 0
         self.thres_loop_extract_clique = 1000000
 
-        self.ngwords, ngwords_origin = "", ""
+        self.ngwords, ngwords_origin = [], []
+        self.important_words = []
         self.opinions = opinions
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
@@ -30,6 +31,8 @@ class ClassificateOpinions():
         self.node_buf = []
         self.mecab = MeCab.Tagger(
             "-Ochasen -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd")
+        self.clusters = []
+        self.labels = []
 
     def classificate(self):  # main
         self.opinions = self.text_cleaning(self.opinions)
@@ -39,6 +42,7 @@ class ClassificateOpinions():
         self.remove_minority_opinions(tokenized_opinions)
         self.connect_edge(tokenized_opinions)
         maximal_cliques = self.extract_maximal_cliques()
+        # large cliqueからクラスタを抽出
         self.create_clusters_from_larges(maximal_cliques)
         pass
 
@@ -102,14 +106,14 @@ class ClassificateOpinions():
         self.ngwords, self.ngwords_origin = ngwords, ngwords
 
     def remove_stopwords(self, tokenized_opinions):
-        words, important_words, res = [], [], []
+        words, res = [], []
         for t in tokenized_opinions:
             words.extend(t)
         for word, cnt in Counter(words).most_common():
             if cnt <= math.floor(0.035*len(self.gr.nodes)) or cnt >= math.ceil(0.6*len(self.gr.nodes)):
                 self.ngwords.append(word)
             else:
-                important_words.append(word)
+                self.important_words.append(word)
         for t in tokenized_opinions:
             res.append([u for u in t if not u in self.ngwords])
         return res
@@ -227,7 +231,9 @@ class ClassificateOpinions():
         self.create_graph_index(self.gr2, large_cliques)
         self.connect_edge_large(large_cliques)
         clusters = self.extract_clusters_large(self.gr2, large_cliques)
-        return clusters
+        tokenized_clusters = self.tokenize_clusters(clusters)
+        self.check_words_in_cluster(clusters, tokenized_clusters)
+        # return clusters
     
     def extract_large_cliques(self, maximal_cliques):
         large_cliques, buf = [], []
@@ -285,3 +291,58 @@ class ClassificateOpinions():
                 set1 = set(buf)
                 clusters.append(list(set1))
         return clusters
+
+    def tokenize_clusters(self, clusters):
+        tokenized_clusters = []
+        for i in range(len(clusters)):
+            tokenized_cluster = []
+            for s in clusters[i]:
+                tokens = []
+                self.mecab.parse("")
+                split_c = self.mecab.parseToNode(pr.preprocessing(s))
+                while split_c:
+                    word = split_c.surface
+                    hinshi = split_c.feature.split(",")[0]
+                    if hinshi == u"名詞":  # 名詞のみ
+                        if not word in self.ngwords_origin:
+                            tokens.append(word)
+                    split_c = split_c.next
+                tokened_cluster.append(tokens)
+            tokenized_clusters.append(tokenized_cluster)
+        for t in tokenized_clusters:
+            for s in t:
+                for i in range(len(s)-1):
+                    if p >= len(s)-1:
+                        break
+                    for j in self.unique_words:
+                        if s[p] == j[0] and s[p+1] == j[1]:
+                            s[p] += s[p+1]
+                            del s[p+1]
+                            p -= 1
+        for s in range(len(clusters)):
+            for i in range(len(clusters[s])):
+                cnt = clusters[s][i].count("退園")
+                while cnt > 0:
+                    tokenized_clusters[s][i].remove("園")
+                    tokenized_clusters[s][i].append("退園")
+                    cnt -= 1
+                cnt2 = clusters[s][i].count("子供の家")
+                while cnt2 > 0:
+                    tokenized_clusters[s][i].remove("子供")
+                    tokenized_clusters[s][i].append("子供の家")
+                    cnt2 -= 1
+        return tokenized_clusters
+
+    def check_words_in_cluster(self, clusters, tokenized_clusters):
+        for k in range(len(clusters)):
+            words = []
+            for j in range(len(tokenized_clusters[k])):
+                for l in range(len(tokenized_clusters[k][j])):
+                    words.append(tokenized_clusters[k][j][l])
+            counter = Counter(words)
+            for word, cnt in counter.most_common():
+                if self.important_words[k] == word:
+                    self.clusters.append(clusters[k])
+        for i range(len(self.clusters)):
+            self.labels.append(self.important_words[i])
+        
