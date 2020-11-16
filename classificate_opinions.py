@@ -181,7 +181,7 @@ class ClassificateOpinions():
     def extract_maximal_cliques(self):
         clusters = []
         for n in self.gr.nodes:
-            cnt_loop, list_n, list_size, buf, stack, depth = 0, [[n]], [n], [1], [], []
+            cnt_loop, list_n, list_size, buf, stack, depth = 0, [[n]], [1], [n], [], []
             for to in nx.all_neighbors(self.gr, n):
                 stack.append(to)
                 depth.append(len(buf))
