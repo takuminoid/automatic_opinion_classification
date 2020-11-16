@@ -74,7 +74,37 @@ if __name__ == "__main__":
     res(10, out, ans)
 
     # _def extract_large_cliques
-    out = c.extract_large_cliques([['a', 'b'], [
-        'a', 'c', 'b'], ['c']])
-    ans = [['a', 'c', 'b']]
+    out = c.extract_large_cliques([
+        ['a', 'b'], ['a', 'c', 'b'], ['c'],
+        ['a'], ['a', 'b'], ['a', 'c', 'b', 'd'],
+        ])
+    ans = [['a', 'c', 'b', 'd']] # 最も大きいリストが帰ってくる
     res(11, out, ans)
+
+    # __def create_graph
+    out = len(c.gr2.nodes)
+    ans = 0
+    res(12, out, ans)
+
+    ex_large_cliques = [
+        ['a', 'b'], ['c', 'd', 'e'], ['f'],
+        ['g'], ['h', 'i'], ['j', 'k', 'l', 'm'],
+        ['n', 'o'], ['p', 'q', 'r'], ['s'],
+        ['t'], ['a', 'b'], ['w', 'y', 'z', 'a'],
+        ]
+    c.create_graph_index(c.gr2, ex_large_cliques)
+    out = len(c.gr2.nodes)
+    ans = 12
+    res(13, out, ans)
+
+    # __def connect_edge_large
+    c.connect_edge_large(ex_large_cliques)
+    out = len(c.gr2.edges) 
+    ans = 3 # (0,10), (0, 11), (10, 11)
+    res(14, out, ans)
+
+    # __def extract_clusters_large
+    out = c.extract_clusters_large(c.gr2, ex_large_cliques)
+    ans = [['a', 'b', 'w', 'z', 'y']]
+    res(15, out, ans)
+    
