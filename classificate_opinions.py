@@ -19,8 +19,9 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
+        self.thres_loop_extract_clique = 1000000
+        
         self.ngwords, ngwords_origin = "", ""
-
         self.opinions = opinions
         self.create_stopwords_list()
         self.unique_words = [["児童", "クラブ"], ["イルカ", "クラブ"], ["セントラル", "開発"]]
@@ -35,6 +36,7 @@ class ClassificateOpinions():
         node_list, self.node_buf = list(self.gr.nodes), list(self.gr.nodes)
         tokenized_opinions = self.remove_stopwords(self.tokenize(node_list))
         self.remove_minority_opinions(tokenized_opinions)
+        self.connect_edge(tokenized_opinions)
         pass
 
     def text_cleaning(self, opinions):
@@ -175,3 +177,39 @@ class ClassificateOpinions():
                                 cnt += 1
                             else:  # 動詞の場合
                                 cnt += 0.7
+
+    def extract_maximal_cliques(self):
+        clusters = []
+        for n in self.gr.nodes:
+            cnt_loop, list_n, list_size, buf, stack, depth = 0, [[n]], [n], [1], [], []
+            for to in nx.all_neighbors(self.gr, n):
+                stack.append(to)
+                depth.append(len(buf))
+            while len(stack) > 0:
+                to, dep = stack.pop(), depth.pop()
+                while True: # bufをdepと同じ長さになるまで消してく
+                    if len(buf) < dep: 
+                        print("error")
+                    if len(buf) == dep:
+                        break
+                    buf.pop()
+                flag = True
+                for i in buf: # 今出き上がっているbufのノードと全て繋がっているかをみる
+                    if not self.gr.has_edge(to, i): # to -> i に辺があるかを見る
+                        flag = False
+                        break
+                if flag: # 全てと隣接していたらbufにアペンド
+                    buf.append(to)
+                    for toto in nx.all_neighbors(self.gr, to):
+                        if not toto in buf:
+                            stack.append(toto)
+                            depth.append(len(buf))
+                    cp_buf = copy.deepcopy(buf)
+                    list_n.append(cp_buf)
+                    list_size.append(len(buf))
+                cnt_loop += 1
+                if cnt_loop > self.thres_loop_extract_clique:
+                    break
+            k = list_size.index(max(list_size))
+            clusters.append(list_n[k])
+        return clusters
