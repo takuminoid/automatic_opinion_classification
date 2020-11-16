@@ -62,7 +62,13 @@ if __name__ == "__main__":
     ans = 3
     res(8, out, ans)
 
+    # def connect_edge
     c.connect_edge([['保育園', '入れる', '不安'], ['保育園', '増やす'], ['学童', '増やす']])
     out = len(c.gr.edges)
     ans = 1
     res(9, out, ans)
+
+    # def extract_maximul_cliques
+    out = c.extract_maximal_cliques()
+    ans = [['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！'], ['保育園の数を増やしてください！', '保育園の数が少なく入れるか不安'], ['学童を増やして欲しいです']]
+    res(10, out, ans)
