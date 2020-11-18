@@ -13,5 +13,6 @@ print(len(list_detail))
 
 c = ClassificateOpinions(list_detail)
 clusters, labels = c.classificate()
-print(clusters[0])
+print(len(clusters))
+print(len(labels))
 print(labels)
