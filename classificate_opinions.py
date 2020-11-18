@@ -357,7 +357,7 @@ class ClassificateOpinions():
 
     def extract_most_frequenst_word(self, tokenized_cliques):
         list_frequent_words = []
-        for k in range(len(self.clusters)):
+        for k in range(len(tokenized_cliques)):
             buf = []
             words = []
             for j in range(len(tokenized_cliques[k])):
@@ -367,19 +367,19 @@ class ClassificateOpinions():
             for word, cnt in counter.most_common():
                 if not (word in self.ngwords):
                     buf.append(word)
-                    break
+                break
             list_frequent_words.append(buf)
         return list_frequent_words
 
     def combine_cliques_same_word(self, maximal_cliques, list_frequent_words):
-        # visited = copy.deepcopy(self.labels)
+        visited = copy.deepcopy(self.labels)
         # ccn_copy2 = copy.deepcopy(ccn)
         for i in range(len(list_frequent_words)-1):
             cnt = 1
-            if (len(list_frequent_words[i]) <= 0) or (list_frequent_words[i][0] in self.labels):
+            if (len(list_frequent_words[i]) <= 0) or (list_frequent_words[i][0] in visited):
                 continue
             # labelsに直接appendしてOK?
-            self.labels.append(list_frequent_words[i][0])
+            visited.append(list_frequent_words[i][0])
             for k in range(i+1, len(list_frequent_words)):
                 if len(list_frequent_words[k]) <= 0:
                     continue
@@ -388,20 +388,24 @@ class ClassificateOpinions():
                     maximal_cliques[i].extend(maximal_cliques[k])
             if cnt >= math.floor(max(2, len(maximal_cliques)*0.25/100)):  # 一位の回数が1,2回しかない単語は除去
                 set1 = set(maximal_cliques[i])
-                self.clusters.append(list(maximal_cliques))
+                self.clusters.append(list(set1))
                 self.labels.append(list_frequent_words[i][0])
 
     def improve_cluster_by_labelwords(self):
-        for i in reversed(range(len(self.clusters))):
+        clusters = copy.deepcopy(self.clusters)
+        for i in reversed(range(len(clusters))):
             cnt = 0
             for n in self.node_buf:
                 if self.labels[i] in n:
                     flag = True
-                    for c in self.clusters:
+                    for c in clusters:
                         if n in c:
                             flag = False
                             break
                     if flag:
-                        self.clusters[i].append(n)
-            set1 = set(self.clusters[i])
+                        clusters[i].append(n)
+            # print(i)
+            # print(type(i))
+            # # print(clusters[i])
+            set1 = set(clusters[i])
             self.clusters[i] = copy.deepcopy(list(set1))
