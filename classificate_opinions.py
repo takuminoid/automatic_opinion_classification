@@ -347,3 +347,25 @@ class ClassificateOpinions():
                     self.clusters.append(clusters[k])
         for i in range(len(self.clusters)):
             self.labels.append(self.important_words[i])
+
+    def create_clusters_from_all(self, maximal_cliques):
+        tokenized_cliques = tokenize_clusters(maximal_cliques)
+        list_frequent_words = extract_most_frequenst_word(tokenized_cliques)
+        pass
+
+    def extract_most_frequenst_word(self, tokenized_cliques):
+        list_frequent_words = []
+        for k in tqdm(range(len(ccn))):
+            buf = []
+            words=[]
+            for j in range(len(tokenized_cliques[k])):
+                for l in range(len(tokenized_cliques[k][j])):
+                    words.append(tokenized_cliques[k][j][l])
+            counter = Counter(words)
+            for word, cnt in counter.most_common():
+                if not (word in self.ngwords):
+                    buf.append(word)
+                    break
+            list_frequent_words.append(buf)
+        return list_frequent_words
+            
