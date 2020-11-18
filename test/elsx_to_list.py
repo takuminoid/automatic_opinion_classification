@@ -1,13 +1,14 @@
 import pandas as pd
 import mojimoji as mj
 
+
 def input(sheet_num, column_name, path):
 
     for j in range(sheet_num):
         if j == 0:
-            df = pd.read_excel(path, sheet_name=j, usecols=[1,2])
+            df = pd.read_excel(path, sheet_name=j, usecols=[1, 2])
         else:
-            df2 = pd.read_excel(path, sheet_name=j, usecols=[1,2])
+            df2 = pd.read_excel(path, sheet_name=j, usecols=[1, 2])
             df = pd.concat([df, df2])
     df = df.dropna(how='any')
 
@@ -17,7 +18,7 @@ def input(sheet_num, column_name, path):
     for s in zip(df[column_name]):
         s = (str)(s)
         flag = False
-        if '①' in s: # 文中に①がある場合は，②以降も同じ話題である可能性が高いと感じる
+        if '①' in s:  # 文中に①がある場合は，②以降も同じ話題である可能性が高いと感じる
             for sl in split_list2:
                 if sl in s:
                     s_buf = s.split(sl)
@@ -33,8 +34,8 @@ def input(sheet_num, column_name, path):
         if not flag:
             list_detail.append(s)
 
-    #数字を半角に統一
+    # 数字を半角に統一
     for i in range(len(list_detail)):
-        list_detail[i] = mj.zen_to_han(list_detail[i], kana = False, ascii = False)
+        list_detail[i] = mj.zen_to_han(list_detail[i], kana=False, ascii=False)
 
     return list_detail

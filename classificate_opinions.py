@@ -46,7 +46,6 @@ class ClassificateOpinions():
         self.create_clusters_from_larges(maximal_cliques)
         self.create_clusters_from_all
         return self.clusters, self.labels
-        pass
 
     def text_cleaning(self, opinions):
         splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
@@ -356,7 +355,6 @@ class ClassificateOpinions():
             tokenized_cliques)
         self.combine_cliques_same_word(maximal_cliques, list_frequent_words)
         self.improve_cluster_by_labelwords()
-        pass
 
     def extract_most_frequenst_word(self, tokenized_cliques):
         list_frequent_words = []
