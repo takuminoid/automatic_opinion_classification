@@ -44,6 +44,8 @@ class ClassificateOpinions():
         maximal_cliques = self.extract_maximal_cliques()
         # large cliqueからクラスタを抽出
         self.create_clusters_from_larges(maximal_cliques)
+        self.create_clusters_from_all
+        return self.clusters, self.labels
         pass
 
     def text_cleaning(self, opinions):
@@ -352,6 +354,7 @@ class ClassificateOpinions():
         tokenized_cliques = self.tokenize_clusters(maximal_cliques)
         list_frequent_words = self.extract_most_frequenst_word(tokenized_cliques)
         self.combine_cliques_same_word(maximal_cliques, list_frequent_words)
+        self.improve_cluster_by_labelwords()
         pass
 
     def extract_most_frequenst_word(self, tokenized_cliques):
@@ -388,3 +391,18 @@ class ClassificateOpinions():
                 set1 = set(maximal_cliques[i])
                 self.clusters.append(list(maximal_cliques))
                 self.labels.append(list_frequent_words[i][0])
+
+    def improve_cluster_by_labelwords(self):
+        for i in reversed(range(len(self.clusters))):
+            cnt = 0
+            for n in self.node_buf:
+                if self.labels[i] in n:
+                    flag = True
+                    for c in self.clusters:
+                        if n in c:
+                            flag = False
+                            break
+                    if flag:
+                        self.clusters[i].append(n)
+            set1 = set(self.clusters[i])
+            self.clusters[i]=copy.deepcopy(list(set1))
