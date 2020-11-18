@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
-        self.thres_loop_extract_clique = 1000000
+        self.thres_loop_extract_clique = 1000000 / 1000
 
         self.ngwords, ngwords_origin = [], []
         self.important_words = []
@@ -229,7 +229,7 @@ class ClassificateOpinions():
         return maximal_cliques
 
     def create_clusters_from_larges(self, maximal_cliques):
-        large_cliques = extract_large_cliques(maximal_cliques)
+        large_cliques = self.extract_large_cliques(maximal_cliques)
         self.create_graph_index(self.gr2, large_cliques)
         self.connect_edge_large(large_cliques)
         clusters = self.extract_clusters_large(self.gr2, large_cliques)
@@ -311,18 +311,18 @@ class ClassificateOpinions():
                         if not word in self.ngwords_origin:
                             tokens.append(word)
                     split_c = split_c.next
-                tokened_cluster.append(tokens)
+                tokenized_cluster.append(tokens)
             tokenized_clusters.append(tokenized_cluster)
         for t in tokenized_clusters:
             for s in t:
                 for i in range(len(s)-1):
-                    if p >= len(s)-1:
+                    if i >= len(s)-1:
                         break
                     for j in self.unique_words:
-                        if s[p] == j[0] and s[p+1] == j[1]:
-                            s[p] += s[p+1]
-                            del s[p+1]
-                            p -= 1
+                        if s[i] == j[0] and s[i+1] == j[1]:
+                            s[i] += s[i+1]
+                            del s[i+1]
+                            i -= 1
         for s in range(len(clusters)):
             for i in range(len(clusters[s])):
                 cnt = clusters[s][i].count("退園")
