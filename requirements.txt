@@ -1,4 +1,4 @@
 mojimoji
 networkx
-MeCab
+mecab-python3
 xlrd

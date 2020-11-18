@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
-        self.thres_loop_extract_clique = 1000000 / 10000
+        self.thres_loop_extract_clique = 1000000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
@@ -110,12 +110,12 @@ class ClassificateOpinions():
         for t in tokenized_opinions:
             words.extend(t)
         for word, cnt in Counter(words).most_common():
-            if cnt <= math.floor(0.035*len(self.gr.nodes)) or cnt >= math.ceil(0.6*len(self.gr.nodes)):
+            if (cnt <= math.floor(0.035*len(self.gr.nodes))) or (cnt >= math.ceil(0.6*len(self.gr.nodes))):
                 self.ngwords.append(word)
             else:
                 self.important_words.append(word)
         for t in tokenized_opinions:
-            res.append([u for u in t if not u in self.ngwords])
+            res.append([u for u in t if (not u in self.ngwords)])
         return res
 
     def tokenize(self, node):
@@ -264,8 +264,8 @@ class ClassificateOpinions():
                         if large_cliques[q][k] == large_cliques[p][l]:
                             cnt += 1
                             break
-                per = cnt * 100 / \
-                    min(len(large_cliques[q]), len(large_cliques[p]))
+                per = round(cnt * 100 /
+                            min(len(large_cliques[q]), len(large_cliques[p])))
                 if per >= 50:
                     self.gr2.add_edge(p, q)
 
@@ -404,8 +404,5 @@ class ClassificateOpinions():
                             break
                     if flag:
                         clusters[i].append(n)
-            # print(i)
-            # print(type(i))
-            # # print(clusters[i])
             set1 = set(clusters[i])
             self.clusters[i] = copy.deepcopy(list(set1))
