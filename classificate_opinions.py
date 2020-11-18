@@ -19,9 +19,9 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
-        self.thres_loop_extract_clique = 1000000 / 1000
+        self.thres_loop_extract_clique = 1000000 / 10000
 
-        self.ngwords, ngwords_origin = [], []
+        self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
         self.opinions = opinions
         self.create_stopwords_list()
@@ -44,7 +44,7 @@ class ClassificateOpinions():
         maximal_cliques = self.extract_maximal_cliques()
         # large cliqueからクラスタを抽出
         self.create_clusters_from_larges(maximal_cliques)
-        self.create_clusters_from_all
+        self.create_clusters_from_all(maximal_cliques)
         return self.clusters, self.labels
 
     def text_cleaning(self, opinions):
@@ -103,8 +103,7 @@ class ClassificateOpinions():
             ngwords.append(chr(i))
         for i in range(65, 65+26):  # アルファベット大文字
             ngwords.append(chr(i))
-        ngwords_origin = copy.deepcopy(ngwords)
-        self.ngwords, self.ngwords_origin = ngwords, ngwords
+        self.ngwords, self.ngwords_origin = ngwords, copy.deepcopy(ngwords)
 
     def remove_stopwords(self, tokenized_opinions):
         words, res = [], []
@@ -329,11 +328,11 @@ class ClassificateOpinions():
                     tokenized_clusters[s][i].remove("園")
                     tokenized_clusters[s][i].append("退園")
                     cnt -= 1
-                cnt2 = clusters[s][i].count("子供の家")
-                while cnt2 > 0:
+                cnt = clusters[s][i].count("子供の家")
+                while cnt > 0:
                     tokenized_clusters[s][i].remove("子供")
                     tokenized_clusters[s][i].append("子供の家")
-                    cnt2 -= 1
+                    cnt -= 1
         return tokenized_clusters
 
     def check_words_in_cluster(self, clusters, tokenized_clusters):
@@ -358,7 +357,7 @@ class ClassificateOpinions():
 
     def extract_most_frequenst_word(self, tokenized_cliques):
         list_frequent_words = []
-        for k in tqdm(range(len(ccn))):
+        for k in range(len(self.clusters)):
             buf = []
             words = []
             for j in range(len(tokenized_cliques[k])):
