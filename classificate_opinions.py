@@ -349,8 +349,9 @@ class ClassificateOpinions():
             self.labels.append(self.important_words[i])
 
     def create_clusters_from_all(self, maximal_cliques):
-        tokenized_cliques = tokenize_clusters(maximal_cliques)
-        list_frequent_words = extract_most_frequenst_word(tokenized_cliques)
+        tokenized_cliques = self.tokenize_clusters(maximal_cliques)
+        list_frequent_words = self.extract_most_frequenst_word(tokenized_cliques)
+        self.combine_cliques_same_word(maximal_cliques, list_frequent_words)
         pass
 
     def extract_most_frequenst_word(self, tokenized_cliques):
@@ -368,4 +369,22 @@ class ClassificateOpinions():
                     break
             list_frequent_words.append(buf)
         return list_frequent_words
-            
+    
+    def combine_cliques_same_word(self, maximal_cliques, list_frequent_words):
+        # visited = copy.deepcopy(self.labels)
+        # ccn_copy2 = copy.deepcopy(ccn)
+        for i in range(len(list_frequent_words)-1):
+            cnt = 1
+            if (len(list_frequent_words[i]) <= 0) or (list_frequent_words[i][0] in self.labels):
+                continue
+            self.labels.append(list_frequent_words[i][0]) # labelsに直接appendしてOK?
+            for k in range(i+1, len(list_frequent_words)):
+                if len(list_frequent_words[k]) <= 0:
+                    continue
+                if list_frequent_words[i][0] == list_frequent_words[k][0]:
+                    cnt += 1
+                    maximal_cliques[i].extend(maximal_cliques[k])
+            if cnt >= math.floor(max(2, len(maximal_cliques)*0.25/100)): # 一位の回数が1,2回しかない単語は除去
+                set1 = set(maximal_cliques[i])
+                self.clusters.append(list(maximal_cliques))
+                self.labels.append(list_frequent_words[i][0])
