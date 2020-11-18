@@ -1,3 +1,4 @@
 mojimoji
 networkx
 MeCab
+xlrd
