@@ -176,7 +176,7 @@ class ClassificateOpinions():
             for t2 in range(t1+1, len(tokenized_opinions)):
                 if self.gr.has_edge(self.node_buf[t1], self.node_buf[t2]):
                     continue
-                cnt, flag, len_t2 = 0, False, len(tokenized_opinions[t2])
+                cnt, len_t2 = 0, len(tokenized_opinions[t2])
                 if len_t2 <= self.thres_opinion_words:
                     continue
                 t1_t2_and_list = set(tokenized_opinions[t1]) & set(tokenized_opinions[t2])
@@ -184,29 +184,29 @@ class ClassificateOpinions():
                     continue
                 else:
                     for w in t1_t2_and_list:
+                        count = tokenized_opinions[t1].count(w) * tokenized_opinions[t2].count(w)
+                        if self.mecab.parseToNode(w).next.feature.split(",")[0] == u'名詞':
+                            cnt += 1*count
+                        else:  # 動詞の場合
+                            cnt += 0.7*count
                         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
                             self.gr.add_edge(self.node_buf[t1], self.node_buf[t2])
-                            flag = True
-                            break
-                        elif self.mecab.parseToNode(w).next.feature.split(",")[0] == u'名詞':
-                            cnt += 1
-                        else:  # 動詞の場合
-                            cnt += 0.7
-                
+                            break 
+                # flag = False
                 # for i in range(len_t1):
                 #     if flag:
                 #         break
                 #     for j in range(len_t2):
+                #         if tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
+                #             if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
+                #                 cnt += 1
+                #             else:  # 動詞の場合
+                #                 cnt += 0.7
                 #         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
                 #             self.gr.add_edge(
                 #                 self.node_buf[t1], self.node_buf[t2])
                 #             flag = True
                 #             break
-                #         elif tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
-                #             if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
-                #                 cnt += 1
-                #             else:  # 動詞の場合
-                #                 cnt += 0.7
 
     def extract_maximal_cliques(self):
         maximal_cliques = []
