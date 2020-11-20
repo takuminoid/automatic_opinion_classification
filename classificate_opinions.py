@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
-        self.thres_loop_extract_clique = 100000  # この値を減らすと，線形的に時間が短化
+        self.thres_loop_extract_clique = 100000/10000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
@@ -47,7 +47,8 @@ class ClassificateOpinions():
         self.create_clusters_from_all(maximal_cliques)
         self.clusters, self.labels = self.combine_similar_clusters(
             self.clusters, self.labels)
-        return self.clusters, self.labels
+        label_nums = self.data_shaping(self.node_buf, self.clusters, self.labels)
+        return self.clusters, label_nums
 
     def text_cleaning(self, opinions):
         splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
@@ -419,7 +420,7 @@ class ClassificateOpinions():
                     buf.append(k)
             if len(buf) == 0:
                 buf.append(len(labels)-1)
-            label_nums.append([k])
+            label_nums.append(buf)
         return label_nums
 
     def combine_similar_clusters(self, clusters, labels):
