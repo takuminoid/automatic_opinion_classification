@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_minority_opinion_words = 0
-        self.thres_loop_extract_clique = 1000000  # この値を減らすと，線形的に時間が短化
+        self.thres_loop_extract_clique = 100000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
@@ -45,6 +45,7 @@ class ClassificateOpinions():
         # large cliqueからクラスタを抽出
         self.create_clusters_from_larges(maximal_cliques)
         self.create_clusters_from_all(maximal_cliques)
+        self.clusters, self.labels = self.combine_similar_clusters(self.clusters, self.labels)
         return self.clusters, self.labels
 
     def text_cleaning(self, opinions):
@@ -419,4 +420,64 @@ class ClassificateOpinions():
                 buf.append(len(labels)-1)
             label_nums.append([k])
         return label_nums
+
+    def combine_similar_clusters(self, clusters, labels):
+        combined_labels = []
+        for i in range(len(labels)):
+            combined_labels.append([labels[i]])
+        combined_clusters, combined_labels = self.check_and_combine(clusters, combined_labels, 20)
+        combined_clusters, combined_labels = self.check_and_combine(combined_clusters, combined_labels, 30)
+        return combined_clusters, combined_labels
+
+    def check_and_combine(self, clusters, labels, threshold):
+        stock_list = []
+        for i in range(len(clusters)):
+            stock = []
+            for k in range(len(clusters)):
+                cnt = 0
+                if i == k:
+                    continue
+                for i2 in range(len(clusters[i])):
+                    for k2 in range(len(clusters[k])):
+                        if clusters[i][i2] == clusters[k][k2]:
+                            cnt += 1
+                            break
+                if (2*cnt/(len(clusters[i])+len(clusters[k])-2*cnt)*100) >= threshold:
+                    stock.append(labels[k])
+            if len(stock) == 1:
+                for l in stock:
+                    stock_list.append(l)
+            else:
+                stock_list.append("NA")
+
+        delete_list_clust, delete_list_label = [], []
+        for i in range(len(stock_list)):
+            if not stock_list[i] == "NA":
+                if stock_list[i] in labels:
+                    indec = labels.index(stock_list[i])
+                    clusters[i].extend(clusters[indec])
+                    labels[i].extend(stock_list[i])
+                    labels[i] = list(set(labels[i]))
+                    delete_list_clust.append(clusters[indec])
+                    delete_list_label.append(stock_list[i])
+
+        for i in range(len(delete_list_clust)):
+            if (delete_list_clust[i] in clusters) and (delete_list_label[i] in labels):
+                clusters.pop(clusters.index(delete_list_clust[i]))
+                labels.pop(labels.index(delete_list_label[i]))
+        for i in range(len(clusters)):
+            labels[i] = list(set(labels[i]))
+
+        for i in range(len(labels) - 1): # 重複しているラベルを消していく
+            for k in range(i, len(labels)):
+                if i == k:
+                    continue
+                if set(labels[i]) == set(labels[k]) and len(labels[i]) == len(labels[k]): # setを用いることで順不同になる
+                    clusters.pop(labels.index(labels[k]))
+                    labels.pop(labels.index(labels[k]))
                 
+        # クラスタ内の要素の重複を解消したい
+        for i in range(len(clusters)):
+            clusters[i] = list(set(clusters[i]))
+            labels[i] = list(set(labels[i]))
+        return clusters, labels
