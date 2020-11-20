@@ -17,13 +17,14 @@ if __name__ == "__main__":
 
     start = time.time()
     c = ClassificateOpinions(list_detail)
-    clusters, labels = c.classificate()
+    clusters, label_nums = c.classificate()
     elapsed_time = time.time() - start
 
     ans_len_gredges = 160670
     ans_len_gr2edges = 11799
-    ans_len_clusters = 42
-    ans_len_labels = 42
+    ans_len_clusters = 39
+    ans_len_labels = 39 + 1
+    ans_len_label_nums = len(list_detail)
 
     # gr エッジ数
     ans, out = ans_len_gredges, len(c.gr.edges)
@@ -37,6 +38,14 @@ if __name__ == "__main__":
     # label数
     ans, out = ans_len_labels, len(c.labels)
     print("len(labels): ", out, check(ans, out))
+    # label_num数
+    ans, out = ans_len_label_nums, len(label_nums)
+    print("len(label_nums): ", out, check(ans, out))
 
-    print("labels: ",labels)
+    print("labels: ",c.labels)
+    # for i in label_nums:
+    #     print('[', end='')
+    #     for l in i:
+    #         print(c.labels[l], end=', ')
+    #     print(']', end=', ')
     print("time: ", elapsed_time, "(sec)", end = "\n")
