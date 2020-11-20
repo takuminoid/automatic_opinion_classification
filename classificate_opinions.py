@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_opinion_words = 0
-        self.thres_loop_extract_clique = 100000/10000  # この値を減らすと，線形的に時間が短化
+        self.thres_loop_extract_clique = 100000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
@@ -182,20 +182,31 @@ class ClassificateOpinions():
                 t1_t2_and_list = set(tokenized_opinions[t1]) & set(tokenized_opinions[t2])
                 if len(t1_t2_and_list) == 0:
                     continue
-                for i in range(len_t1):
-                    if flag:
-                        break
-                    for j in range(len_t2):
+                else:
+                    for w in t1_t2_and_list:
                         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
-                            self.gr.add_edge(
-                                self.node_buf[t1], self.node_buf[t2])
+                            self.gr.add_edge(self.node_buf[t1], self.node_buf[t2])
                             flag = True
                             break
-                        elif tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
-                            if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
-                                cnt += 1
-                            else:  # 動詞の場合
-                                cnt += 0.7
+                        elif self.mecab.parseToNode(w).next.feature.split(",")[0] == u'名詞':
+                            cnt += 1
+                        else:  # 動詞の場合
+                            cnt += 0.7
+                
+                # for i in range(len_t1):
+                #     if flag:
+                #         break
+                #     for j in range(len_t2):
+                #         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
+                #             self.gr.add_edge(
+                #                 self.node_buf[t1], self.node_buf[t2])
+                #             flag = True
+                #             break
+                #         elif tokenized_opinions[t1][i] == tokenized_opinions[t2][j]:
+                #             if self.mecab.parseToNode(tokenized_opinions[t1][i]).next.feature.split(",")[0] == u'名詞':
+                #                 cnt += 1
+                #             else:  # 動詞の場合
+                #                 cnt += 0.7
 
     def extract_maximal_cliques(self):
         maximal_cliques = []
@@ -267,13 +278,15 @@ class ClassificateOpinions():
                 if self.gr2.has_edge(p, q):
                     continue
                 cnt = 0
-                for k in range(len(large_cliques[q])):
-                    for l in range(len(large_cliques[p])):
-                        if large_cliques[q][k] == large_cliques[p][l]:
-                            cnt += 1
-                            break
-                per = round(cnt * 100 /
-                            min(len(large_cliques[q]), len(large_cliques[p])))
+                q_p_and_list = set(large_cliques[q]) & set(large_cliques[p])
+                per = round(len(q_p_and_list) * 100 / min(len(large_cliques[q]), len(large_cliques[p])))
+                # for k in range(len(large_cliques[q])):
+                #     for l in range(len(large_cliques[p])):
+                #         if large_cliques[q][k] == large_cliques[p][l]:
+                #             cnt += 1
+                #             break
+                # per = round(cnt * 100 /
+                #             min(len(large_cliques[q]), len(large_cliques[p])))
                 if per >= 50:
                     self.gr2.add_edge(p, q)
 
