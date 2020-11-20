@@ -2,3 +2,4 @@ mojimoji
 networkx
 mecab-python3
 xlrd
+time
