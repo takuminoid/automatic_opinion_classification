@@ -179,6 +179,9 @@ class ClassificateOpinions():
                 cnt, flag, len_t2 = 0, False, len(tokenized_opinions[t2])
                 if len_t2 <= self.thres_opinion_words:
                     continue
+                t1_t2_and_list = set(tokenized_opinions[t1]) & set(tokenized_opinions[t2])
+                if len(t1_t2_and_list) == 0:
+                    continue
                 for i in range(len_t1):
                     if flag:
                         break
