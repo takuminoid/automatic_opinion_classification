@@ -107,3 +107,6 @@ if __name__ == "__main__":
     out = c.extract_clusters_large(c.gr2, ex_large_cliques)
     ans = [['a', 'w', 'y', 'z', 'b']]
     res(15, set(out[0]), set(ans[0])) # リストの中身は順不同
+
+    out = c.data_shaping(c.node_buf, [['保育園の数が少なく入れるか不安', '保育園の数を増やしてください！'], ['保育園の数が少なく入れるか不安'], ['学童を増やして欲しいです']], ['a', 'i', 'u'])
+    print(out)

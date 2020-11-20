@@ -406,3 +406,17 @@ class ClassificateOpinions():
                         clusters[i].append(n)
             set1 = set(clusters[i])
             self.clusters[i] = copy.deepcopy(list(set1))
+
+    def data_shaping(self, nodes, clusters, labels):
+        label_nums = []
+        labels.append('その他') # ラベル結合処理を書いたら，リストに変更する
+        for i in range(len(nodes)):
+            buf = []
+            for k in range(len(clusters)):
+                if nodes[i] in clusters[k]:
+                    buf.append(k)
+            if len(buf) == 0:
+                buf.append(len(labels)-1)
+            label_nums.append([k])
+        return label_nums
+                
