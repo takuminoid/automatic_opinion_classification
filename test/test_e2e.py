@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     start = time.time()
     c = ClassificateOpinions(list_detail)
-    clusters, label_nums = c.classificate()
+    outputs = c.classificate()
     elapsed_time = time.time() - start
 
     ans_len_gredges = 160670
@@ -39,13 +39,15 @@ if __name__ == "__main__":
     ans, out = ans_len_labels, len(c.labels)
     print("len(labels): ", out, check(ans, out))
     # label_num数
-    ans, out = ans_len_label_nums, len(label_nums)
+    ans, out = ans_len_label_nums, len(outputs[0])
     print("len(label_nums): ", out, check(ans, out))
 
-    print("labels: ",c.labels)
+    print("labels: ",outputs[1])
     # for i in label_nums:
     #     print('[', end='')
     #     for l in i:
     #         print(c.labels[l], end=', ')
     #     print(']', end=', ')
     print("time: ", elapsed_time, "(sec)", end = "\n")
+
+    # print(outputs)

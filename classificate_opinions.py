@@ -11,10 +11,10 @@ class ClassificateOpinions():
     '''
       概要：意見を入力すると，自動的に分類ラベルの予測，意見分類を行う
       Input: 意見のリスト　例）['こんにちは', '今日はいい天気ですね', '私は原発には反対です']
-      Output: どのラベルに分類されたかのリスト，全ラベルのリスト　例）{
-                                                              label_num: [1, 2, 0],
-                                                              labels: ['[原発]', '[賛成]', '[天気]'],
-                                                              }
+      Output: どのラベルに分類されたかのリスト，全ラベルのリスト　例）[
+                                                                [[1], [0, 2], [0]],
+                                                                [['原発'], ['賛成', '投票'], ['天気']]
+                                                            ]
     '''
 
     def __init__(self, opinions):
@@ -48,7 +48,8 @@ class ClassificateOpinions():
         self.clusters, self.labels = self.combine_similar_clusters(
             self.clusters, self.labels)
         label_nums = self.data_shaping(self.opinions, self.clusters, self.labels)
-        return self.clusters, label_nums
+        # return self.clusters, label_nums
+        return [label_nums, self.labels]
 
     def text_cleaning(self, opinions):
         # splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
