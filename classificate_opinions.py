@@ -18,7 +18,7 @@ class ClassificateOpinions():
     '''
 
     def __init__(self, opinions):
-        self.thres_minority_opinion_words = 0
+        self.thres_opinion_words = 0
         self.thres_loop_extract_clique = 100000/10000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
@@ -164,20 +164,20 @@ class ClassificateOpinions():
 
     def remove_minority_opinions(self, tokenized_opinions):
         for i in range(len(tokenized_opinions)):
-            if len(tokenized_opinions[i]) <= self.thres_minority_opinion_words:
+            if len(tokenized_opinions[i]) <= self.thres_opinion_words:
                 self.gr.remove_node(self.node_buf[i])
 
     def connect_edge(self, tokenized_opinions):
         self.mecab.parse("")
         for t1 in range(len(tokenized_opinions)-1):
             len_t1 = len(tokenized_opinions[t1])
-            if len_t1 <= self.thres_minority_opinion_words:
+            if len_t1 <= self.thres_opinion_words:
                 continue
             for t2 in range(t1+1, len(tokenized_opinions)):
                 if self.gr.has_edge(self.node_buf[t1], self.node_buf[t2]):
                     continue
                 cnt, flag, len_t2 = 0, False, len(tokenized_opinions[t2])
-                if len_t2 <= self.thres_minority_opinion_words:
+                if len_t2 <= self.thres_opinion_words:
                     continue
                 for i in range(len_t1):
                     if flag:
