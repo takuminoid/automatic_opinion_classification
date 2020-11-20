@@ -45,7 +45,8 @@ class ClassificateOpinions():
         # large cliqueからクラスタを抽出
         self.create_clusters_from_larges(maximal_cliques)
         self.create_clusters_from_all(maximal_cliques)
-        self.clusters, self.labels = self.combine_similar_clusters(self.clusters, self.labels)
+        self.clusters, self.labels = self.combine_similar_clusters(
+            self.clusters, self.labels)
         return self.clusters, self.labels
 
     def text_cleaning(self, opinions):
@@ -410,7 +411,7 @@ class ClassificateOpinions():
 
     def data_shaping(self, nodes, clusters, labels):
         label_nums = []
-        labels.append('その他') # ラベル結合処理を書いたら，リストに変更する
+        labels.append('その他')  # ラベル結合処理を書いたら，リストに変更する
         for i in range(len(nodes)):
             buf = []
             for k in range(len(clusters)):
@@ -425,8 +426,10 @@ class ClassificateOpinions():
         combined_labels = []
         for i in range(len(labels)):
             combined_labels.append([labels[i]])
-        combined_clusters, combined_labels = self.check_and_combine(clusters, combined_labels, 20)
-        combined_clusters, combined_labels = self.check_and_combine(combined_clusters, combined_labels, 30)
+        combined_clusters, combined_labels = self.check_and_combine(
+            clusters, combined_labels, 20)
+        combined_clusters, combined_labels = self.check_and_combine(
+            combined_clusters, combined_labels, 30)
         return combined_clusters, combined_labels
 
     def check_and_combine(self, clusters, labels, threshold):
@@ -468,14 +471,15 @@ class ClassificateOpinions():
         for i in range(len(clusters)):
             labels[i] = list(set(labels[i]))
 
-        for i in range(len(labels) - 1): # 重複しているラベルを消していく
+        for i in range(len(labels) - 1):  # 重複しているラベルを消していく
             for k in range(i, len(labels)):
                 if i == k:
                     continue
-                if set(labels[i]) == set(labels[k]) and len(labels[i]) == len(labels[k]): # setを用いることで順不同になる
+                # setを用いることで順不同になる
+                if set(labels[i]) == set(labels[k]) and len(labels[i]) == len(labels[k]):
                     clusters.pop(labels.index(labels[k]))
                     labels.pop(labels.index(labels[k]))
-                
+
         # クラスタ内の要素の重複を解消したい
         for i in range(len(clusters)):
             clusters[i] = list(set(clusters[i]))
