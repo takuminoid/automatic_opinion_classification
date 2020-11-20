@@ -47,12 +47,13 @@ class ClassificateOpinions():
         self.create_clusters_from_all(maximal_cliques)
         self.clusters, self.labels = self.combine_similar_clusters(
             self.clusters, self.labels)
-        label_nums = self.data_shaping(self.node_buf, self.clusters, self.labels)
+        label_nums = self.data_shaping(self.opinions, self.clusters, self.labels)
         return self.clusters, label_nums
 
     def text_cleaning(self, opinions):
-        splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
-        splitted_opinions = self.num_zen_to_han(splitted_opinions)  # 数字の全角を半角へ
+        # splitted_opinions = self.text_splitter(self.opinions)  # 意見の分割
+        # splitted_opinions = self.num_zen_to_han(splitted_opinions)  # 数字の全角を半角へ
+        splitted_opinions = self.num_zen_to_han(opinions)
         return splitted_opinions
 
     def text_splitter(self, opinions):
@@ -412,7 +413,7 @@ class ClassificateOpinions():
 
     def data_shaping(self, nodes, clusters, labels):
         label_nums = []
-        labels.append('その他')  # ラベル結合処理を書いたら，リストに変更する
+        labels.append(['その他'])  # ラベル結合処理を書いたら，リストに変更する
         for i in range(len(nodes)):
             buf = []
             for k in range(len(clusters)):
