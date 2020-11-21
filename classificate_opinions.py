@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_opinion_words = 0
-        self.thres_loop_extract_clique = 100000  # この値を減らすと，線形的に時間が短化
+        self.thres_loop_extract_clique = 100000/10000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
@@ -47,7 +47,8 @@ class ClassificateOpinions():
         self.create_clusters_from_all(maximal_cliques)
         self.clusters, self.labels = self.combine_similar_clusters(
             self.clusters, self.labels)
-        label_nums = self.data_shaping(self.opinions, self.clusters, self.labels)
+        label_nums = self.data_shaping(
+            self.opinions, self.clusters, self.labels)
         # return self.clusters, label_nums
         return [label_nums, self.labels]
 
@@ -179,19 +180,22 @@ class ClassificateOpinions():
                 cnt, len_t2 = 0, len(tokenized_opinions[t2])
                 if len_t2 <= self.thres_opinion_words:
                     continue
-                t1_t2_and_list = set(tokenized_opinions[t1]) & set(tokenized_opinions[t2])
+                t1_t2_and_list = set(tokenized_opinions[t1]) & set(
+                    tokenized_opinions[t2])
                 if len(t1_t2_and_list) == 0:
                     continue
                 else:
                     for w in t1_t2_and_list:
-                        count = tokenized_opinions[t1].count(w) * tokenized_opinions[t2].count(w)
+                        count = tokenized_opinions[t1].count(
+                            w) * tokenized_opinions[t2].count(w)
                         if self.mecab.parseToNode(w).next.feature.split(",")[0] == u'名詞':
                             cnt += 1*count
                         else:  # 動詞の場合
                             cnt += 0.7*count
                         if math.floor(cnt) >= round(math.sqrt(min(len_t1, len_t2))):
-                            self.gr.add_edge(self.node_buf[t1], self.node_buf[t2])
-                            break 
+                            self.gr.add_edge(
+                                self.node_buf[t1], self.node_buf[t2])
+                            break
                 # flag = False
                 # for i in range(len_t1):
                 #     if flag:
@@ -279,7 +283,8 @@ class ClassificateOpinions():
                     continue
                 cnt = 0
                 q_p_and_list = set(large_cliques[q]) & set(large_cliques[p])
-                per = round(len(q_p_and_list) * 100 / min(len(large_cliques[q]), len(large_cliques[p])))
+                per = round(len(q_p_and_list) * 100 /
+                            min(len(large_cliques[q]), len(large_cliques[p])))
                 # for k in range(len(large_cliques[q])):
                 #     for l in range(len(large_cliques[p])):
                 #         if large_cliques[q][k] == large_cliques[p][l]:

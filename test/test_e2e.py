@@ -5,8 +5,10 @@ import time
 sys.path.append('./')
 from classificate_opinions import ClassificateOpinions
 
+
 def check(ans, out):
     return 'ok' if out == ans else 'error'
+
 
 if __name__ == "__main__":
     list_detail = []
@@ -43,15 +45,15 @@ if __name__ == "__main__":
     ans, out = ans_len_label_nums, len(outputs[0])
     print("len(label_nums): ", out, check(ans, out))
 
-    print("labels: ",outputs[1])
+    print("labels: ", outputs[1])
     # 意見ごとのラベル表示
     # for i in label_nums:
     #     print('[', end='')
     #     for l in i:
     #         print(c.labels[l], end=', ')
     #     print(']', end=', ')
-    print("time: ", elapsed_time, "(sec)", end = "\n") 
-    # データ数 1395 
+    print("time: ", elapsed_time, "(sec)", end="\n")
+    # データ数 1395
     # loop=10 => 10 sec 程度
     # loop=100,000 => 300 sec 程度
 
