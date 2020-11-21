@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # loop=10 時
     ans_len_gredges = 163724
-    ans_len_gr2edges = 11678
+    ans_len_gr2edges = 11187
     ans_len_clusters = 38
     ans_len_labels = 38 + 1
     ans_len_label_nums = len(list_detail)
