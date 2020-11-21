@@ -28,9 +28,9 @@
 **使用例**
 
 ```
-from classificate_opinion import ClassificateOpinion
+from classificate_opinions import ClassificateOpinions
 
-c = ClassificationOpinions(input_list)
+c = ClassificateOpinions(input_list)
 output = c.classificate()
 
 label_nums = output[0]
