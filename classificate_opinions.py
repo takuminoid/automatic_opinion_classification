@@ -239,7 +239,7 @@ class ClassificateOpinions():
                     list_n.append(cp_buf)
                     list_size.append(len(buf))
                 cnt_loop += 1
-                if cnt_loop > self.thres_loop_extract_clique:
+                if cnt_loop >= self.thres_loop_extract_clique:
                     break
             k = list_size.index(max(list_size))
             maximal_cliques.append(list_n[k])

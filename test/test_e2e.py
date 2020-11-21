@@ -20,10 +20,11 @@ if __name__ == "__main__":
     outputs = c.classificate()
     elapsed_time = time.time() - start
 
-    ans_len_gredges = 160670
-    ans_len_gr2edges = 11799
-    ans_len_clusters = 39
-    ans_len_labels = 39 + 1
+    # loop=10 時
+    ans_len_gredges = 163724
+    ans_len_gr2edges = 11678
+    ans_len_clusters = 38
+    ans_len_labels = 38 + 1
     ans_len_label_nums = len(list_detail)
 
     # gr エッジ数
@@ -43,11 +44,15 @@ if __name__ == "__main__":
     print("len(label_nums): ", out, check(ans, out))
 
     print("labels: ",outputs[1])
+    # 意見ごとのラベル表示
     # for i in label_nums:
     #     print('[', end='')
     #     for l in i:
     #         print(c.labels[l], end=', ')
     #     print(']', end=', ')
-    print("time: ", elapsed_time, "(sec)", end = "\n")
+    print("time: ", elapsed_time, "(sec)", end = "\n") 
+    # データ数 1395 
+    # loop=10 => 10 sec 程度
+    # loop=100,000 => 300 sec 程度
 
     # print(outputs)
