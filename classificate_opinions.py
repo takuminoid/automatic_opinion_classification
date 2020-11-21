@@ -19,7 +19,7 @@ class ClassificateOpinions():
 
     def __init__(self, opinions):
         self.thres_opinion_words = 0
-        self.thres_loop_extract_clique = 100000/10000  # この値を減らすと，線形的に時間が短化
+        self.thres_loop_extract_clique = 100000  # この値を減らすと，線形的に時間が短化
 
         self.ngwords, self.ngwords_origin = [], []
         self.important_words = []
