@@ -140,3 +140,4 @@ dmypy.json
 cython_debug/
 
 test/data/test_data.xlsx
+test/test_unit_ignored.py
