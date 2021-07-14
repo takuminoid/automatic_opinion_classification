@@ -1,7 +1,7 @@
-from classificate_opinions import ClassificateOpinions
 import unittest
 import sys
 sys.path.append('./')
+from automated_opinion_classification.classificate_opinions import ClassificateOpinions
 
 
 class TestClassificateOpinions(unittest.TestCase):

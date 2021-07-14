@@ -1,11 +1,15 @@
 import mojimoji as mj
 import copy
 import networkx as nx
-from lib import preprocessing as pr
 import MeCab
 from collections import Counter
 import math
-
+import os
+base = os.path.dirname(os.path.abspath(__file__))
+import sys
+sys.path.append(base)
+import preprocessing as pr
+from stopwords import stopword_list
 
 class ClassificateOpinions():
     '''
@@ -97,10 +101,9 @@ class ClassificateOpinions():
 
     def create_stopwords_list(self):
         ngwords = []
-        stopwords = open('data/stopwords.txt', 'r')  # SlothLib + etc
+        stopwords = stopword_list  # SlothLib + etc
         for line in stopwords:
             ngwords.append(line.rstrip('\n'))
-        stopwords.close()
         for i in range(12353, 12436):  # 平仮名一文字
             ngwords.append(chr(i))
         for i in range(12449, 12533):  # 片仮名一文字

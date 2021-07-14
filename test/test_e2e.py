@@ -3,7 +3,8 @@ import sys
 import elsx_to_list
 import time
 sys.path.append('./')
-from classificate_opinions import ClassificateOpinions
+from automated_opinion_classification.classificate_opinions import ClassificateOpinions
+base = os.path.dirname(os.path.abspath(__file__))
 
 
 def check(ans, out):
@@ -13,7 +14,7 @@ def check(ans, out):
 if __name__ == "__main__":
     list_detail = []
     list_detail = elsx_to_list.input(
-        2, "Detail", os.path.abspath("test/data/test_data.xlsx"))
+        2, "Detail", os.path.abspath(base + "/data/test_data.xlsx"))
 
     print(len(list_detail))
 
